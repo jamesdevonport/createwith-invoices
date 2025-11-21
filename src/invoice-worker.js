@@ -183,7 +183,7 @@ function invoiceTemplate(data) {
       --pill: #ede9fe; --shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
     }
     * { box-sizing: border-box; }
-    body { margin: 0; background: radial-gradient(circle at 20% 20%, rgba(60,41,109,0.08), transparent 40%), var(--muted); font-family: ${BRAND.fontFamily}; color: var(--ink-800); }
+    body { margin: 0; background: var(--muted); font-family: ${BRAND.fontFamily}; color: var(--ink-800); }
     @page { size: A4 portrait; margin: 18mm 16mm 20mm 16mm; }
     .sheet { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 26px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
     .top-bar { height: 6px; width: 100%; background: linear-gradient(90deg, var(--brand), #5d4aa0, #b6acd9); border-radius: 10px; margin-bottom: 18px; }
@@ -195,7 +195,7 @@ function invoiceTemplate(data) {
     h1 { margin: 8px 0 0; font-size: 22px; color: var(--ink-900); }
     .meta table { font-size: 13px; color: var(--ink-600); width: 100%; border-collapse: collapse; }
     .meta td { padding: 3px 0 2px 12px; }
-    .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 22px 0 10px; padding: 16px; background: linear-gradient(135deg, rgba(60,41,109,0.05), rgba(60,41,109,0.01)); border: 1px solid var(--border); border-radius: 12px; }
+    .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 22px 0 10px; padding: 16px; background: #f9fafb; border: 1px solid var(--border); border-radius: 12px; }
     .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-500); margin-bottom: 4px; }
     .value { font-size: 13px; color: var(--ink-800); line-height: 1.45; }
     table { width: 100%; border-collapse: collapse; margin-top: 14px; }
