@@ -1,0 +1,10 @@
+{
+  "name": "createwith-invoices",
+  "version": "0.1.0",
+  "description": "Cloudflare Worker that renders Create With invoices as PDF via Browser Rendering API.",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@cloudflare/puppeteer": "^0.2.0"
+  }
+}

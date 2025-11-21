@@ -1,0 +1,10 @@
+name = "createwith-invoice-worker"
+main = "src/invoice-worker.js"
+compatibility_date = "2024-11-22"
+workers_dev = true
+
+[browser]
+binding = "BROWSER"
+
+[observability]
+enabled = true
