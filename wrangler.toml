@@ -1,4 +1,4 @@
-name = "createwith-invoice-worker"
+name = "cw-invoices"
 main = "src/invoice-worker.js"
 compatibility_date = "2024-11-22"
 workers_dev = true
