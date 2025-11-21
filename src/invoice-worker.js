@@ -161,33 +161,35 @@ function invoiceTemplate(data) {
     * { box-sizing: border-box; }
     body { margin: 0; background: radial-gradient(circle at 20% 20%, rgba(60,41,109,0.08), transparent 40%), var(--muted); font-family: ${BRAND.fontFamily}; color: var(--ink-800); }
     @page { size: A4 portrait; margin: 18mm 16mm 20mm 16mm; }
-    .sheet { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 28px; box-shadow: var(--shadow); }
+    .sheet { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 26px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .top-bar { height: 6px; width: 100%; background: linear-gradient(90deg, var(--brand), #5d4aa0, #b6acd9); border-radius: 10px; margin-bottom: 18px; }
     header { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 18px; }
     .logo-block { display: flex; flex-direction: column; gap: 10px; }
-    .logo { height: 52px; }
+    .logo { height: 52px; width: auto; max-width: 200px; object-fit: contain; object-position: left center; }
     .meta { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
-    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #fff; color: var(--brand); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; border: 1px solid rgba(60,41,109,0.18); box-shadow: inset 0 0 0 1px rgba(60,41,109,0.08); }
-    h1 { margin: 10px 0 2px; font-size: 24px; color: var(--ink-900); }
-    .meta table { font-size: 13px; color: var(--ink-500); width: 100%; border-collapse: collapse; }
-    .meta td { padding: 4px 0 3px 12px; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: rgba(60,41,109,0.1); color: var(--brand); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; font-size: 11px; border: 1px solid rgba(60,41,109,0.22); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.4); }
+    h1 { margin: 8px 0 0; font-size: 22px; color: var(--ink-900); }
+    .meta table { font-size: 13px; color: var(--ink-600); width: 100%; border-collapse: collapse; }
+    .meta td { padding: 3px 0 2px 12px; }
     .columns { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; margin: 22px 0 10px; padding: 16px; background: linear-gradient(135deg, rgba(60,41,109,0.05), rgba(60,41,109,0.01)); border: 1px solid var(--border); border-radius: 12px; }
     .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-500); margin-bottom: 4px; }
     .value { font-size: 13px; color: var(--ink-800); line-height: 1.45; }
     table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-    thead th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; color: var(--ink-500); padding-bottom: 8px; border-bottom: 2px solid var(--brand); }
+    thead th { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; text-align: left; color: var(--ink-500); padding: 10px 0 8px; border-bottom: 2px solid var(--brand); background: rgba(60,41,109,0.04); }
     tbody td { padding: 10px 0; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--ink-700); }
     tbody tr:last-child td { border-bottom: none; }
     .qty, .price, .total { text-align: right; }
     .totals { margin-top: 18px; margin-left: auto; max-width: 320px; border-top: 2px solid var(--brand); padding-top: 12px; }
     .total-row { display: flex; justify-content: space-between; margin: 4px 0; font-size: 13px; }
-    .grand { font-weight: 700; font-size: 15px; color: var(--ink-900); }
-    .notes { margin-top: 14px; padding: 12px 14px; background: var(--muted); border: 1px dashed var(--border); border-radius: 12px; color: var(--ink-700); font-size: 13px; }
+    .grand { font-weight: 700; font-size: 15px; color: var(--brand); }
+    .notes { margin-top: 14px; padding: 12px 14px; background: rgba(60,41,109,0.06); border: 1px solid rgba(60,41,109,0.15); border-radius: 12px; color: var(--ink-700); font-size: 13px; }
     .pay { margin-top: 10px; font-size: 13px; color: var(--ink-700); line-height: 1.4; }
     .qr { margin-top: 8px; height: 86px; }
     @media (max-width: 720px) { header { grid-template-columns: 1fr; } .meta { text-align: left; align-items: flex-start; } }
   </style>
 </head><body>
   <main class="sheet">
+    <div class="top-bar"></div>
     <header>
       <div class="logo-block">
         <img class="logo" src="${company.logoUrl}" alt="Create With logo" />
