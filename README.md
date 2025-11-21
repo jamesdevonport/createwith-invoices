@@ -47,7 +47,6 @@ curl -X POST https://cw-invoices.userloop.workers.dev/invoice \
   -d '{
     "invoice_number": "INV-2024-012",
     "issue_date": "2024-11-22",
-    "due_date": "2024-12-06",
     "currency": "GBP",
     "bill_to": {
       "name": "Client Name",

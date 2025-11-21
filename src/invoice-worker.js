@@ -156,7 +156,6 @@ function invoiceTemplate(data) {
   const {
     invoice_number,
     issue_date,
-    due_date,
     currency,
     company,
     bill_to,
@@ -223,7 +222,6 @@ function invoiceTemplate(data) {
         <div class="pill">Invoice</div>
         <table>
           <tr><td>Issue date:</td><td>${issue_date}</td></tr>
-          <tr><td>Due date:</td><td>${due_date}</td></tr>
           <tr><td>Company:</td><td>${company.name}</td></tr>
           <tr><td>Company No:</td><td>${company.company_number}</td></tr>
           <tr><td>VAT:</td><td>${company.vat_number}</td></tr>
