@@ -10,34 +10,34 @@ Cloudflare Worker that renders Create With invoices as PDFs using the Browser Re
 Live endpoint (current deployment): `https://cw-invoices.userloop.workers.dev/invoice`
 
 ## Request format
-Send a POST with JSON; required fields are the line items and an invoice number. Company data defaults to Create With Ltd and is already embedded.
+Send a POST with JSON (snake_case). Required fields are the line items and an invoice number. Company data defaults to Create With Ltd and is already embedded.
 
 ```json
 {
-  "invoiceNumber": "INV-2024-012",
-  "issueDate": "2024-11-22",
-  "dueDate": "2024-12-06",
+  "invoice_number": "INV-2024-012",
+  "issue_date": "2024-11-22",
+  "due_date": "2024-12-06",
   "currency": "GBP",
-  "billTo": {
+  "bill_to": {
     "name": "Client Name",
     "company": "Client Co",
     "address": "123 Client St, London",
     "email": "billing@client.com"
   },
   "items": [
-    { "description": "Design sprint", "qty": 2, "unitPrice": 2250 },
-    { "description": "Hosting (Oct 2024)", "qty": 1, "unitPrice": 180 }
+    { "description": "Design sprint", "qty": 2, "unit_price": 2250 },
+    { "description": "Hosting (Oct 2024)", "qty": 1, "unit_price": 180 }
   ],
   "totals": { "tax": 936, "paid": 0 },
   "notes": "Please pay within 14 days. Thank you.",
-  "showBankDetails": true
+  "show_bank_details": true
 }
 ```
 
 ### Optional fields
-- `payment`: override bank details or supply `qrImage`
-- `showBankDetails`: set to `false` to hide the bank block
-- `company.logoUrl`, `company.brandColor`: override branding if ever needed
+- `payment`: override bank details or supply `qr_image` (keys: `bank`, `account_name`, `sort_code`, `account_number`, `iban`, `swift`)
+- `show_bank_details`: set to `false` to hide the bank block
+- `company.logo_url`, `company.brand_color`: override branding if ever needed
 
 ## Example curl
 ```bash
@@ -45,23 +45,23 @@ curl -X POST https://cw-invoices.userloop.workers.dev/invoice \
   -H "content-type: application/json" \
   -o invoice.pdf \
   -d '{
-    "invoiceNumber": "INV-2024-012",
-    "issueDate": "2024-11-22",
-    "dueDate": "2024-12-06",
+    "invoice_number": "INV-2024-012",
+    "issue_date": "2024-11-22",
+    "due_date": "2024-12-06",
     "currency": "GBP",
-    "billTo": {
+    "bill_to": {
       "name": "Client Name",
       "company": "Client Co",
       "address": "123 Client St, London",
       "email": "billing@client.com"
     },
     "items": [
-      { "description": "Design sprint", "qty": 2, "unitPrice": 2250 },
-      { "description": "Hosting (Oct 2024)", "qty": 1, "unitPrice": 180 }
+      { "description": "Design sprint", "qty": 2, "unit_price": 2250 },
+      { "description": "Hosting (Oct 2024)", "qty": 1, "unit_price": 180 }
     ],
     "totals": { "tax": 936, "paid": 0 },
     "notes": "Please pay within 14 days. Thank you.",
-    "showBankDetails": true
+    "show_bank_details": true
   }'
 ```
 

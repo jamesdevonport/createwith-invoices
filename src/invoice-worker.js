@@ -8,8 +8,8 @@ const BRAND = {
 
 const COMPANY = {
   name: 'CREATE WITH LTD',
-  companyNumber: '15934640',
-  vatNumber: '499197417',
+  company_number: '15934640',
+  vat_number: '499197417',
   address: '71-75 Shelton Street, London, England, WC2H 9JQ',
   domain: 'createwith.com',
 };
@@ -40,7 +40,7 @@ export default {
     try {
       const html = invoiceTemplate(data);
       const pdf = await renderPdf(html, env);
-      const fileName = `invoice-${sanitizeFilename(data.invoiceNumber || 'draft')}.pdf`;
+      const fileName = `invoice-${sanitizeFilename(data.invoice_number || 'draft')}.pdf`;
       return withCors(new Response(pdf, {
         status: 200,
         headers: {
@@ -71,7 +71,7 @@ function normalizePayload(payload) {
   const currency = payload.currency || 'GBP';
   const subtotal = items.reduce((sum, item) => {
     const qty = Number(item.qty) || 0;
-    const unit = Number(item.unitPrice) || 0;
+    const unit = Number(item.unit_price ?? item.unitPrice) || 0;
     return sum + qty * unit;
   }, 0);
 
@@ -81,36 +81,60 @@ function normalizePayload(payload) {
     discount: payload.totals?.discount ?? 0,
     paid: payload.totals?.paid ?? 0,
   };
-  const balanceDue = payload.totals?.balanceDue ?? (totals.subtotal + totals.tax - totals.discount - totals.paid);
-  totals.balanceDue = balanceDue;
+  const balance_due = payload.totals?.balance_due ?? payload.totals?.balanceDue ?? (totals.subtotal + totals.tax - totals.discount - totals.paid);
+  totals.balance_due = balance_due;
 
   const company = {
     ...COMPANY,
-    logoUrl: sanitizeUrl(payload.company?.logoUrl) || BRAND.logo,
-    brandColor: payload.company?.brandColor || BRAND.color,
+    logo_url: sanitizeUrl(payload.company?.logo_url || payload.company?.logoUrl) || BRAND.logo,
+    brand_color: payload.company?.brand_color || payload.company?.brandColor || BRAND.color,
     email: payload.company?.email || `accounts@${COMPANY.domain}`,
     website: payload.company?.website || `https://${COMPANY.domain}`,
   };
 
-  const showBankDetails = payload.showBankDetails !== undefined ? !!payload.showBankDetails : true;
+  const show_bank_details = payload.show_bank_details !== undefined ? !!payload.show_bank_details
+    : payload.showBankDetails !== undefined ? !!payload.showBankDetails
+    : true;
+
   const payment = {
     ...BANK,
-    ...(payload.payment || {}),
+    ...snakeifyPayment(payload.payment),
   };
 
   return {
-    invoiceNumber: payload.invoiceNumber || 'DRAFT',
-    issueDate: payload.issueDate || '',
-    dueDate: payload.dueDate || '',
+    invoice_number: payload.invoice_number || payload.invoiceNumber || 'DRAFT',
+    issue_date: payload.issue_date || payload.issueDate || '',
+    due_date: payload.due_date || payload.dueDate || '',
     currency,
     company,
-    billTo: payload.billTo || {},
-    items,
+    bill_to: payload.bill_to || payload.billTo || {},
+    items: items.map(toSnakeItem),
     totals,
     notes: payload.notes || '',
     payment,
-    showBankDetails,
-    qrImage: sanitizeUrl(payload.payment?.qrImage),
+    show_bank_details,
+    qr_image: sanitizeUrl(payload.payment?.qr_image || payload.payment?.qrImage),
+  };
+}
+
+function toSnakeItem(item) {
+  return {
+    description: item.description,
+    qty: item.qty,
+    unit_price: item.unit_price ?? item.unitPrice,
+  };
+}
+
+function snakeifyPayment(payment = {}) {
+  if (!payment) return {};
+  return {
+    bank: payment.bank,
+    account_name: payment.account_name ?? payment.accountName,
+    sort_code: payment.sort_code ?? payment.sortCode,
+    account_number: payment.account_number ?? payment.accountNumber,
+    iban: payment.iban,
+    swift: payment.swift,
+    qr_image: sanitizeUrl(payment.qr_image || payment.qrImage),
   };
 }
 
@@ -130,31 +154,31 @@ function sanitizeFilename(value) {
 
 function invoiceTemplate(data) {
   const {
-    invoiceNumber,
-    issueDate,
-    dueDate,
+    invoice_number,
+    issue_date,
+    due_date,
     currency,
     company,
-    billTo,
+    bill_to,
     items,
     totals,
     notes,
     payment,
-    showBankDetails,
-    qrImage,
+    show_bank_details,
+    qr_image,
   } = data;
 
   const fmt = (v) => new Intl.NumberFormat('en-GB', { style: 'currency', currency }).format(v || 0);
 
   return `<!DOCTYPE html><html><head>
   <meta charset="utf-8" />
-  <title>Invoice ${invoiceNumber}</title>
+  <title>Invoice ${invoice_number}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --brand: ${company.brandColor};
+      --brand: ${company.brand_color};
       --ink-900: #0f172a; --ink-800: #0f172a; --ink-700: #1e293b; --ink-500: #475569; --border: #e2e8f0; --muted: #f8fafc;
       --pill: #ede9fe; --shadow: 0 16px 40px rgba(17, 24, 39, 0.08);
     }
@@ -192,17 +216,17 @@ function invoiceTemplate(data) {
     <div class="top-bar"></div>
     <header>
       <div class="logo-block">
-        <img class="logo" src="${company.logoUrl}" alt="Create With logo" />
-        <h1>Invoice ${invoiceNumber}</h1>
+        <img class="logo" src="${company.logo_url}" alt="Create With logo" />
+        <h1>Invoice ${invoice_number}</h1>
       </div>
       <div class="meta">
         <div class="pill">Invoice</div>
         <table>
-          <tr><td>Issue date:</td><td>${issueDate}</td></tr>
-          <tr><td>Due date:</td><td>${dueDate}</td></tr>
+          <tr><td>Issue date:</td><td>${issue_date}</td></tr>
+          <tr><td>Due date:</td><td>${due_date}</td></tr>
           <tr><td>Company:</td><td>${company.name}</td></tr>
-          <tr><td>Company No:</td><td>${company.companyNumber}</td></tr>
-          <tr><td>VAT:</td><td>${company.vatNumber}</td></tr>
+          <tr><td>Company No:</td><td>${company.company_number}</td></tr>
+          <tr><td>VAT:</td><td>${company.vat_number}</td></tr>
         </table>
       </div>
     </header>
@@ -214,7 +238,7 @@ function invoiceTemplate(data) {
       </div>
       <div>
         <div class="label">Bill To</div>
-        <div class="value">${billTo?.name || ''}<br/>${billTo?.company || ''}<br/>${billTo?.address || ''}<br/>${billTo?.email || ''}</div>
+        <div class="value">${bill_to?.name || ''}<br/>${bill_to?.company || ''}<br/>${bill_to?.address || ''}<br/>${bill_to?.email || ''}</div>
       </div>
     </section>
 
@@ -225,8 +249,8 @@ function invoiceTemplate(data) {
           <tr style="page-break-inside: avoid;">
             <td>${item.description || ''}</td>
             <td class="qty">${item.qty ?? ''}</td>
-            <td class="price">${fmt(item.unitPrice)}</td>
-            <td class="total">${fmt((Number(item.qty) || 0) * (Number(item.unitPrice) || 0))}</td>
+            <td class="price">${fmt(item.unit_price)}</td>
+            <td class="total">${fmt((Number(item.qty) || 0) * (Number(item.unit_price) || 0))}</td>
           </tr>`).join('')}
       </tbody>
     </table>
@@ -236,16 +260,16 @@ function invoiceTemplate(data) {
       ${totals.tax ? `<div class="total-row"><span>Tax</span><span>${fmt(totals.tax)}</span></div>` : ''}
       ${totals.discount ? `<div class="total-row"><span>Discount</span><span>-${fmt(totals.discount)}</span></div>` : ''}
       ${totals.paid ? `<div class="total-row"><span>Paid</span><span>${fmt(totals.paid)}</span></div>` : ''}
-      <div class="total-row grand"><span>Balance Due</span><span>${fmt(totals.balanceDue)}</span></div>
+      <div class="total-row grand"><span>Balance Due</span><span>${fmt(totals.balance_due)}</span></div>
     </div>
 
     ${notes ? `<div class="notes">${notes}</div>` : ''}
-    ${(showBankDetails && payment) ? `<div class="pay">
+    ${(show_bank_details && payment) ? `<div class="pay">
       <strong>Payment details</strong><br/>
       Bank: ${payment.bank || ''}<br/>
-      Account: ${payment.accountName || ''} · ${payment.sortCode || ''} · ${payment.accountNumber || ''}<br/>
+      Account: ${payment.account_name || ''} · ${payment.sort_code || ''} · ${payment.account_number || ''}<br/>
       IBAN: ${payment.iban || ''} · SWIFT: ${payment.swift || ''}
-      ${qrImage ? `<div><img class="qr" src="${qrImage}" alt="Payment QR"/></div>` : ''}
+      ${qr_image ? `<div><img class="qr" src="${qr_image}" alt="Payment QR"/></div>` : ''}
     </div>` : ''}
   </main></body></html>`;
 }
